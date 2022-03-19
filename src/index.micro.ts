@@ -11,7 +11,7 @@ describe('DateTime', function () {
 
   it('makes a date from seconds epoch zero', function () {
     const fromEpoch = DateTime.fromEpoch(0)
-    assertThat(fromEpoch).is({ _tag: 'DateTime', value: '1970-01-01T00:00:00.000+00:00' as DateTimeStr, tz: 'UTC' })
+    assertThat(fromEpoch).is({ _tag: 'DateTime', value: '1970-01-01T00:00:00.000+00:00' as DateTimeStr<'UTC'> }) //, tz: 'UTC' })
   })
 
   it('makes a date from seconds epoch', function () {
@@ -47,7 +47,7 @@ describe('DateTime', function () {
         const aklDate = DateTime.toTimezone('Pacific/Auckland')(utc)
         const dateFnsDate = tzfns.formatInTimeZone(utc.value, 'Pacific/Auckland', DateTime.formatStr)
 
-        assertThat(aklDate).is({ _tag: 'DateTime', value: dateFnsDate as DateTimeStr, tz: 'Pacific/Auckland' })
+        assertThat(aklDate).is({ _tag: 'DateTime', value: dateFnsDate as DateTimeStr<'Pacific/Auckland'> }) //, tz: 'Pacific/Auckland' })
       })
     )
   })
