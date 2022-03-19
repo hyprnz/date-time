@@ -1,6 +1,7 @@
 import { DateTime, DateTimeStr } from '.'
 import { assertThat } from 'mismatched'
 import * as fc from 'fast-check'
+import * as tzfns from 'date-fns-tz'
 
 describe('DateTime', function () {
   it('gets current date', () => {
@@ -33,6 +34,20 @@ describe('DateTime', function () {
 
         const toJsDate = DateTime.toDate(dateTime)
         assertThat(toJsDate).is(jsDate)
+      })
+    )
+  })
+
+  it('converts to Pacific/Auckland TZ', function () {
+    fc.assert(
+      fc.property(fc.date({ min: DateTime.toDate(DateTime.min), max: DateTime.toDate(DateTime.max) }), jsDate => {
+        const utc = DateTime.fromDate(jsDate)
+        DateTime.assertIsDateTime(utc)
+
+        const aklDate = DateTime.toTimezone('Pacific/Auckland')(utc)
+        const dateFnsDate = tzfns.formatInTimeZone(utc.value, 'Pacific/Auckland', DateTime.formatStr)
+
+        assertThat(aklDate).is({ _tag: 'DateTime', value: dateFnsDate as DateTimeStr, tz: 'Pacific/Auckland' })
       })
     )
   })

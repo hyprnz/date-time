@@ -1,14 +1,11 @@
 import * as tzfns from 'date-fns-tz'
 import * as datefns from 'date-fns'
 import enNZ from 'date-fns/locale/en-NZ'
+import { TimeZone } from './timeZones'
 
 declare const valieDateTime: unique symbol
 
 export type DateTimeStr = string & { [valieDateTime]: true }
-
-const format = `yyyy-MM-dd'T'HH:mm:ss.SSSxxx`
-
-type Timezone = 'UTC' | 'Pacific/Auckland'
 
 export type InvalidDate = {
   _tag: 'InvalidDate'
@@ -23,7 +20,7 @@ const invalidDate = (date: string): InvalidDate => ({
 export type DateTime = {
   _tag: 'DateTime'
   value: DateTimeStr
-  tz: Timezone
+  tz: TimeZone
 }
 
 const defaultOptions: tzfns.OptionsWithTZ = {
@@ -31,13 +28,15 @@ const defaultOptions: tzfns.OptionsWithTZ = {
   timeZone: 'UTC'
 }
 
-const of = (dateStr: string, tz: Timezone = 'UTC'): DateTime => ({
+const of = (dateStr: string, tz: TimeZone): DateTime => ({
   _tag: 'DateTime',
   value: dateStr as DateTimeStr,
   tz
 })
 
 export namespace DateTime {
+  export const formatStr = `yyyy-MM-dd'T'HH:mm:ss.SSSxxx`
+
   export function isDateTime(x: any): x is DateTime {
     return x._tag && x._tag === 'DateTime'
   }
@@ -48,9 +47,9 @@ export namespace DateTime {
   }
 
   const fromDateUnsafe = (date: Date): DateTime => {
-    const utcDate = tzfns.formatInTimeZone(date, 'UTC', format, defaultOptions)
+    const utcDate = tzfns.formatInTimeZone(date, 'UTC', formatStr, defaultOptions)
 
-    return of(utcDate)
+    return of(utcDate, 'UTC')
   }
 
   export const fromDate = (date: Date): InvalidDate | DateTime => {
@@ -67,13 +66,21 @@ export namespace DateTime {
 
   export const fromEpoch = (epoch: number): InvalidDate | DateTime => {
     const date = new Date(epoch)
+
     if (!datefns.isValid(date)) return invalidDate(date.toJSON())
 
-    const utcDate = tzfns.formatInTimeZone(date, 'UTC', format, defaultOptions)
-    return of(utcDate)
+    const utcDate = tzfns.formatInTimeZone(date, 'UTC', formatStr, defaultOptions)
+    return of(utcDate, 'UTC')
   }
 
   export const toDate = (dateTime: DateTime): Date => tzfns.toDate(dateTime.value, defaultOptions)
+
+  export const toTimezone =
+    (tz: TimeZone) =>
+    (dateTime: DateTime): DateTime => {
+      const tzDate = tzfns.formatInTimeZone(dateTime.value, tz, formatStr, defaultOptions)
+      return of(tzDate, tz)
+    }
 
   export const isBefore = (x: DateTime) => (y: DateTime) => datefns.isBefore(toDate(y), toDate(x))
   export const isAfter = (x: DateTime) => (y: DateTime) => isBefore(y)(x)
