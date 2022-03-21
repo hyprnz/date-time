@@ -56,7 +56,7 @@ export namespace DateTime {
     return fromDateUnsafe(date)
   }
 
-  export const now = () => fromDate(new Date())
+  export const now = (): DateTime<'UTC'> => fromDateUnsafe(new Date())
 
   export const min = fromDateUnsafe(new Date(-1000000000000))
 
@@ -100,6 +100,7 @@ export namespace DateTime {
   }
 
   const toMicro = (s: string): number => {
+    console.log(`replace : ${s.replace(/[zZ]/, '')}`)
     return s.length > 0 ? padToNumber(s.replace(/[zZ]/, '').substring(0, 6)) : 0
   }
 
