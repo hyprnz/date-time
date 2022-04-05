@@ -4,24 +4,18 @@ import * as fc from 'fast-check'
 import * as tzfns from 'date-fns-tz'
 
 describe('DateTime', function () {
-  it.only('milliseconds', () => {
+  it.skip('milliseconds', () => {
     const jsDate = new Date()
     const now = DateTime.fromDate(jsDate)
     DateTime.assertIsDateTime(now)
 
-    const micro = DateTime.makeMicroseconds(now.value)
-    const hrtime = process.hrtime()
-
-    console.log(hrtime)
-    console.log(now.value)
-    console.log(jsDate.valueOf())
-    console.log(jsDate.getMilliseconds())
-    console.log(micro)
+    const _micro = DateTime.makeMicroseconds(now.value)
+    const _hrtime = process.hrtime()
   })
 
   it('gets current date', () => {
     const now = new Date()
-    const dateTime = DateTime.fromDate(now)
+    const _dateTime = DateTime.fromDate(now)
   })
 
   it('makes a date from seconds epoch zero', function () {

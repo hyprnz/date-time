@@ -7,9 +7,6 @@
     "type": "git",
     "url": "git://github.com/hyprnz/date-time"
   },
-  "publishConfig": {
-    "registry": "https://npm.pkg.github.com/hyprnz"
-  },
   "scripts": {
     "prepare": "husky install",
     "build": "tsc --extendedDiagnostics -p .",

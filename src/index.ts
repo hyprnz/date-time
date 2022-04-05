@@ -95,12 +95,10 @@ export namespace DateTime {
 
   export const makeMicroseconds = (utcDate: DateTimeStr<'UTC'>): number => {
     const parts = utcDate!.split('.')
-    console.log(parts)
     return parts.length > 1 ? toMicro(parts[1].split(/[\+\-]/)[0]) : 0
   }
 
   const toMicro = (s: string): number => {
-    console.log(`replace : ${s.replace(/[zZ]/, '')}`)
     return s.length > 0 ? padToNumber(s.replace(/[zZ]/, '').substring(0, 6)) : 0
   }
 
